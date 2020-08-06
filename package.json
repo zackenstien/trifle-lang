@@ -35,5 +35,8 @@
   "homepage": "https://github.com/zackenstien/trifle-lang#readme",
   "devDependencies": {
     "eslint": "^7.6.0"
+  },
+  "dependencies": {
+    "yargs": "^15.4.1"
   }
 }
