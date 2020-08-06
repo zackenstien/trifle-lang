@@ -1,9 +1,9 @@
 const lexer = require('./lexer'),
       fs = require('fs'),
       Token = require('./lib/Token'),
-      arrayLib = require('./array_lib'),
+      require_folder = require('./lib/require_folder'),
       merge = require('./lib/merge'),
-      performance = require('perf_hooks').performance;
+      path = require('path');
 
 let preErr = console.error;
 console.error = function(str) {
@@ -79,14 +79,12 @@ function evalNumber(i, tokenStream, vars, env) {
 
     if (firstc.lexeme == '(') {
         var x = evalNumber(i + 1, tokenStream, vars, env);
-        console.log("X", x)
         n = x.outputs;
         startPos = x.i + 1;
     }
     
     for (var argi = startPos; argi < tokenStream.length;) {
         var currentTok = tokenStream[argi];
-        console.log("PARSE_NUM", currentTok, n)
 
         if (firstc.lexeme == '(') {
             if (currentTok.lexeme == ')') {
@@ -366,10 +364,9 @@ let vmEnv = {
         console.log.apply({}, args);
     }
 }
-vmEnv = merge(vmEnv, arrayLib);
+vmEnv = merge(vmEnv, require_folder(path.join(__dirname)));
 
 console.time('RUNTIME');
-let runtime = performance.now()
 let toks = lexer(fs.readFileSync('./example.tri').toString());
 //console.log(toks);
 parser(toks, vmEnv);
