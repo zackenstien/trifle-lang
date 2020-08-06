@@ -2,7 +2,7 @@
   <img width="512" height="512" src="assets/badge.png">
 </p>
 
-# Trifle Programming Language (v0.1 [Alpha])
+# Trifle Programming Language (v0.0.1 [Alpha])
 Trifle is a dynamically typed general purpose programming language written entirely in JavaScript.  It (with some hacking) works on both the web and in a Node.js environment.  It derives from Ruby, PHP and JavaScript; here's an example:
 ```
 $name = "John Doe";
