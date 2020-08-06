@@ -1,0 +1,39 @@
+{
+  "name": "trifle",
+  "version": "0.1.2",
+  "description": "A dynamically typed general purpose programming language written entirely in JavaScript.",
+  "main": "parser.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "node parser"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zackenstien/trifle-lang.git"
+  },
+  "keywords": [
+    "programming",
+    "language",
+    "node.js",
+    "java",
+    "script",
+    "js",
+    "interpreter",
+    "program",
+    "cli",
+    "command",
+    "line",
+    "tool"
+  ],
+  "author": "Zack Pace",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zackenstien/trifle-lang/issues"
+  },
+  "homepage": "https://github.com/zackenstien/trifle-lang#readme",
+  "devDependencies": {
+    "eslint": "^7.6.0"
+  }
+}
