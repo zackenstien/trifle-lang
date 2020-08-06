@@ -370,7 +370,4 @@ let vmEnv = {
 let arrayLib = require_folder(path.join(__dirname, '../array'));
 vmEnv = merge(vmEnv, arrayLib);
 
-console.time('RUNTIME');
-let toks = lexer(fs.readFileSync('./example.tri').toString());
-parser(toks, vmEnv);
-console.timeEnd('RUNTIME');
+module.parser = parser;
