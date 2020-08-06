@@ -36,6 +36,8 @@ function convertToLiteral(tok, vars) {
         return null;
     if (typeof tok !== 'object')
         return tok;
+    if (Array.isArray(tok))
+        return tok;
 
     if (tok.name === 'string')
         return tok.lexeme.replace('\\n', '\n');
@@ -232,6 +234,7 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
                                     args.push(num.outputs);
                                     argi = num.i + 1;
                                 } else {
+                                    args.push(vars[currentArg.lexeme]);
                                     argi++;
                                 }
                             } else {
@@ -279,7 +282,6 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 
     let funcEnv = {vars}
     let output = envItem.apply(funcEnv, args);
-
     return {
         i: endIndex,
         output,
@@ -364,10 +366,12 @@ let vmEnv = {
         console.log.apply({}, args);
     }
 }
-vmEnv = merge(vmEnv, require_folder(path.join(__dirname)));
+
+let arrayLib = require_folder(path.join(__dirname, "array"))
+vmEnv = merge(vmEnv, arrayLib);
+
 
 console.time('RUNTIME');
 let toks = lexer(fs.readFileSync('./example.tri').toString());
-//console.log(toks);
 parser(toks, vmEnv);
-console.timeEnd('RUNTIME')
+console.timeEnd('RUNTIME');
