@@ -1,6 +1,6 @@
 {
-  "name": "trifle",
-  "version": "0.1.2",
+  "name": "triflelang",
+  "version": "0.1.3",
   "description": "A dynamically typed general purpose programming language written entirely in JavaScript.",
   "main": "parser.js",
   "directories": {

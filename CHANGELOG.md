@@ -1,13 +1,29 @@
 ## Trifle Changelog
 Here is a list of previous updates for Trifle.
 
+## `v0.1.3` (unstable)
+`v0.1.3` implements a command line interface that you can run Trifle scripts with + the first official release to NPM.
+To install:
+```
+npm i -g trifle
+```
+Example:
+```
+trifle <script>
+```
+You can run `trifle -h` for some help with the command.
+### Features
+- Command Line Interface
+- Bug Fixes
+
 ## `v0.1.0` (unstable)
 This version introduces basic math,  it's functional for basic math like `100 * 100 * 100 * 100` but when you do something like `(100 / 100) * 100` it outputs `1 100`.  This will be fixed in a future version.
-
 ```
 $number = 100;
 println($number * 100); //=> 10000
 ```
+### Features
+- Math
 
 ## `v0.0.1`
 Basic programming language functionality, printing to the console, function calls, etc.
