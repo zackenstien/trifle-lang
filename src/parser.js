@@ -1,8 +1,8 @@
 const lexer = require('./lexer'),
 	  fs = require('fs'),
-	  Token = require('./lib/Token'),
-	  require_folder = require('./lib/require_folder'),
-	  merge = require('./lib/merge'),
+	  Token = require('../lib/Token'),
+	  require_folder = require('../lib/require_folder'),
+	  merge = require('../lib/merge'),
 	  path = require('path');
 
 let preErr = console.error;
@@ -367,9 +367,8 @@ let vmEnv = {
 	}
 };
 
-let arrayLib = require_folder(path.join(__dirname, 'array'));
+let arrayLib = require_folder(path.join(__dirname, '../array'));
 vmEnv = merge(vmEnv, arrayLib);
-
 
 console.time('RUNTIME');
 let toks = lexer(fs.readFileSync('./example.tri').toString());

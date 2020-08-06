@@ -1,4 +1,4 @@
-const Token = require('./lib/Token');
+const Token = require('../lib/Token');
 
 var patterns = [
 	["wspace", /^\s+/],
