@@ -1,0 +1,6 @@
+// Trifle Language
+
+$arraytest1 = array("item1", "item2");
+$items = array($arraytest1, "item3");
+
+println($items);
