@@ -1,5 +1,6 @@
 // Trifle Language
 
 $num = 100;
+$arr = array("TEST");
 
-println((100 / 100) * 100);
+println($arr);
