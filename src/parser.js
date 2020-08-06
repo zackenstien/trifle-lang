@@ -370,4 +370,4 @@ let vmEnv = {
 let arrayLib = require_folder(path.join(__dirname, '../array'));
 vmEnv = merge(vmEnv, arrayLib);
 
-module.parser = parser;
+module.exports = parser;
