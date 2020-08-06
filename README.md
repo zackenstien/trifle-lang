@@ -7,7 +7,7 @@ Trifle is a dynamically typed general purpose programming language written entir
 ```
 $name = "John Doe";
 
-print("Hello,", $name);
+println("Hello,", $name);
 //=> Hello, John Doe
 ```
 
