@@ -1,6 +1,5 @@
 // Trifle Language
 
-$arraytest1 = array("item1", "item2");
-$items = array($arraytest1, "item3");
+$num = 100;
 
-println($items);
+println((100 / 100) * 100);
