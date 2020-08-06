@@ -30,6 +30,8 @@ function convertToLiteral(tok, vars) {
 	/*if (!(tok instanceof Token))
 		tok = convertToToken(tok);*/
 
+	if (tok == null)
+		return tok;
 	if (typeof tok.lexeme === undefined)
 		return tok;
 	if (tok == undefined)
@@ -212,7 +214,15 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 						process.exit(1);
 					} else {
 						if (currentArg.name == 'iden') {
-							if (env[currentArg.lexeme] !== undefined) {
+							console.log(currentArg);
+							if (currentArg.lexeme == 'true' || currentArg.lexeme == 'false' || currentArg.lexeme == 'null') {
+								if (currentArg.lexeme == 'true')
+									args.push(true);
+								else if (currentArg.lexeme == 'false')
+									args.push(false);
+								else
+									args.push(null);
+							} else if (env[currentArg.lexeme] !== undefined) {
 								// Call function
 								if (typeof env[currentArg.lexeme] == 'function') {
 									let res = evalFunction(env[currentArg.lexeme], argi, tokenStream, vars, env, false);
@@ -370,4 +380,10 @@ let vmEnv = {
 let arrayLib = require_folder(path.join(__dirname, '../array'));
 vmEnv = merge(vmEnv, arrayLib);
 
-module.exports = parser;
+module.exports = {parseEnv: parser,
+	compile,
+	parse: function(str) {
+		return parser(str, vmEnv);
+	},
+	getEnv: () => vmEnv
+};

@@ -1,2 +1,39 @@
 #!/usr/bin/env node
 
+const lexer = require('../src/lexer'),
+	  parser = require('../src/parser'),
+	  fs = require('fs'),
+	  path = require('path'),
+	  package = require('../package.json');
+
+const yargs = require('yargs');
+const { pathToFileURL } = require('url');
+
+let args = yargs
+	.usage('$0 <file>', 'Executes a Trifle script from a file.', (yargs) => {
+		yargs.positional('file', {
+			describe: 'The file path of the file you want to run.',
+			type: 'string'
+		});
+	})
+	.version('v', package.version)
+	.help('h')
+	.argv
+
+if (!path.isAbsolute(args.file)) {
+	args.file = path.join(process.cwd(), args.file);
+}
+
+let file;
+if (fs.existsSync(args.file)) {
+	file = args.file;
+} else if (fs.existsSync(args.file + '.tri')) {
+	file = args.file + '.tri';
+} else {
+	console.error(`Module ${args.file} doesn't exist.`);
+	process.exit(1);
+}
+
+let fileContents = fs.readFileSync(file).toString();
+let tokens = lexer(fileContents);
+parser.parse(tokens);

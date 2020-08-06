@@ -3,4 +3,4 @@
 $num = 100;
 $arr = array("TEST");
 
-println($arr);
+println($arr, null);

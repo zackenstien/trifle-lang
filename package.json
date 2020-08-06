@@ -38,5 +38,8 @@
   },
   "dependencies": {
     "yargs": "^15.4.1"
+  },
+  "bin": {
+    "trifle": "bin/trifle"
   }
 }
