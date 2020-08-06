@@ -2,7 +2,8 @@ const lexer = require('./lexer'),
       fs = require('fs'),
       Token = require('./lib/Token'),
       arrayLib = require('./array_lib'),
-      merge = require('./lib/merge');
+      merge = require('./lib/merge'),
+      performance = require('perf_hooks').performance;
 
 let preErr = console.error;
 console.error = function(str) {
@@ -31,10 +32,10 @@ function convertToLiteral(tok, vars) {
 
     if (typeof tok.lexeme === undefined)
         return tok;
-
-    if (tok == undefined) {
-        return null
-    }
+    if (tok == undefined)
+        return null;
+    if (typeof tok !== 'object')
+        return tok;
 
     if (tok.name === 'string')
         return tok.lexeme.replace('\\n', '\n');
@@ -61,14 +62,126 @@ function convertToLiteral(tok, vars) {
     } else if (tok.lexeme == undefined) {
         return tok;
     }
-
-    return tok;
 }
 
 function convertListToLiterals(l, vars) {
     return l.map(arg => {
         return convertToLiteral(arg, vars);
     });
+}
+
+function evalNumber(i, tokenStream, vars, env) {
+    var firstc = tokenStream[i];
+    var n = null;
+    var startPos = i;
+    var endPos;
+    var nextOp = null;
+
+    if (firstc.lexeme == '(') {
+        var x = evalNumber(i + 1, tokenStream, vars, env);
+        console.log("X", x)
+        n = x.outputs;
+        startPos = x.i + 1;
+    }
+    
+    for (var argi = startPos; argi < tokenStream.length;) {
+        var currentTok = tokenStream[argi];
+        console.log("PARSE_NUM", currentTok, n)
+
+        if (firstc.lexeme == '(') {
+            if (currentTok.lexeme == ')') {
+                endPos = argi;
+                break;
+            }
+        }
+
+        if (currentTok.name == 'var') {
+            if (vars[currentTok.lexeme] !== undefined) {
+                if (typeof vars[currentTok.lexeme] == 'number') {
+                    currentTok = convertToToken(vars[currentTok.lexeme]);
+                    console.log("VAR", currentTok)
+                } else {
+                    console.error(`Variable ${currentTok.lexeme} is not a number`);
+                    process.exit(1);
+                }
+            } else {
+                console.error(`Variable ${currentTok.lexeme} doesn't exist`);
+                process.exit(1);
+            }
+        }
+
+        if (currentTok.lexeme == '(') {
+            var segment = evalNumber(argi, tokenStream, vars, env);
+            currentTok = convertToToken(segment.outputs);
+            argi = segment.i;
+        }
+
+        if (currentTok.name == 'int' || currentTok.name == 'float') {
+            if (!n) {
+                n = convertToLiteral(currentTok);
+                argi++;
+            } else if (nextOp == '+') {
+                if (currentTok.name == 'int' || currentTok.name == 'float') {
+                    n += convertToLiteral(currentTok);
+                    nextOp = null;
+                    argi++;
+                }
+            } else if (nextOp == '-') {
+                if (currentTok.name == 'int' || currentTok.name == 'float') {
+                    n -= convertToLiteral(currentTok);
+                    nextOp = null;
+                    argi++;
+                }
+            } else if (nextOp == '/') {
+                if (currentTok.name == 'int' || currentTok.name == 'float') {
+                    n = n / convertToLiteral(currentTok);
+                    nextOp = null;
+                    argi++;
+                }
+            } else if (nextOp == '*') {
+                if (currentTok.name == 'int' || currentTok.name == 'float') {
+                    n = n * convertToLiteral(currentTok);
+                    nextOp = null;
+                    argi++;
+                }
+            } else {
+                argi++;
+            }
+        } else if (currentTok.lexeme == '+') {
+            if (nextOp) {
+                console.error(`Expected 'number', got '${currentTok.lexeme}'`);
+                process.exit(1);
+            }
+            argi++;
+            nextOp = '+';
+        } else if (currentTok.lexeme == '-') {
+            if (nextOp) {
+                console.error(`Expected 'number', got '${currentTok.lexeme}'`);
+                process.exit(1);
+            }
+            argi++;
+            nextOp = '-';
+        } else if (currentTok.lexeme == '/') {
+            if (nextOp) {
+                console.error(`Expected 'number', got '${currentTok.lexeme}'`);
+                process.exit(1);
+            }
+            argi++;
+            nextOp = '/';
+        } else if (currentTok.lexeme == '*') {
+            if (nextOp) {
+                console.error(`Expected 'number', got '${currentTok.lexeme}'`);
+                process.exit(1);
+            }
+            argi++;
+            nextOp = '*';
+        } else {
+            endPos = argi - 1;
+            break;
+        }
+    }
+
+    return {i: endPos, outputs: n};
 }
 
 function evalFunction(envItem, i, tokenStream, vars, env, check) {
@@ -108,6 +221,23 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
                                 }
                             } else {
                                 console.error(`Method ${currentArg.lexeme} doesn't exist`);
+                                process.exit(1);
+                            }
+                        } else if (currentArg.name == 'int' || currentArg.name == 'float' || currentArg.lexeme == '(') {
+                            let num = evalNumber(argi, tokenStream, vars, env);
+                            args.push(num.outputs);
+                            argi = num.i + 1;
+                        } else if (currentArg.name == 'var') {
+                            if (vars[currentArg.lexeme] !== 'undefined') {
+                                if (typeof currentArg.lexeme == 'number') {
+                                    let num = evalNumber(argi, tokenStream, vars, env);
+                                    args.push(num.outputs);
+                                    argi = num.i + 1;
+                                } else {
+                                    argi++;
+                                }
+                            } else {
+                                console.error(`Variable ${currentArg.lexeme} doesn't exist`);
                                 process.exit(1);
                             }
                         } else {
@@ -239,7 +369,8 @@ let vmEnv = {
 vmEnv = merge(vmEnv, arrayLib);
 
 console.time('RUNTIME');
+let runtime = performance.now()
 let toks = lexer(fs.readFileSync('./example.tri').toString());
 //console.log(toks);
 parser(toks, vmEnv);
-console.timeEnd('RUNTIME');
+console.timeEnd('RUNTIME')
