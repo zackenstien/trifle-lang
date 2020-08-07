@@ -7,7 +7,6 @@ const lexer = require('../src/lexer'),
 	  package = require('../package.json');
 
 const yargs = require('yargs');
-const { pathToFileURL } = require('url');
 
 let args = yargs
 	.usage('$0 <file>', 'Executes a Trifle script from a file.', (yargs) => {
@@ -16,7 +15,7 @@ let args = yargs
 			type: 'string'
 		});
 	})
-	.version('v', package.version)
+	.version('v', 'v' + package.version)
 	.help('h')
 	.argv
 
