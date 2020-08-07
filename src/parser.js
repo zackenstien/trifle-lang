@@ -223,10 +223,10 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 							argi = num.i - 1;
 						} else if (currentArg.name == 'var') {
 							if (vars[currentArg.lexeme] !== 'undefined') {
-								if (typeof currentArg.lexeme == 'number') {
+								if (!isNaN(vars[currentArg.lexeme])) {
 									let num = evalNumber(argi, tokenStream, vars, env);
 									args.push(num.outputs);
-									argi = num.i;
+									argi = num.i - 1;
 								} else {
 									args.push(vars[currentArg.lexeme]);
 									argi++;
@@ -285,7 +285,7 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 
 function compile(tokenStream, vmEnv) {
 	return function() {
-		let vars = {};
+		var vars = {};
 
 		for (var i = 0; i < tokenStream.length;) {
 			let currentTok = tokenStream[i];
@@ -294,7 +294,7 @@ function compile(tokenStream, vmEnv) {
 			else if (currentTok.name == 'var') {
 				if (tokenStream.length > i + 1) {
 					if (tokenStream[i + 1].lexeme == '=') {
-						if (tokenStream.length > i + 2) {
+						if (tokenStream[i + 2]) {
 							if (tokenStream[i + 2].name !== 'other') {
 								if (tokenStream[i + 2].name == 'iden') {
 									if (vmEnv[tokenStream[i + 2].lexeme] !== undefined) {
@@ -306,12 +306,24 @@ function compile(tokenStream, vmEnv) {
 									} else {
 										console.error(`Method '${tokenStream[i + 2].lexeme}' doesn't exist`);
 									}
+								} else if (tokenStream[i + 2].name == 'int' || tokenStream[i + 2].name == 'float' || tokenStream[i + 2].lexeme == '(') {
+									let num = evalNumber(i + 2, tokenStream, vars, vmEnv);
+									vars[currentTok.lexeme] = num.outputs;
+									i = num.i;
+									if (!tokenStream[i + 1].lexeme == ';') {
+										console.error(`Expected ';'; got '${tokenStream[i + 1].lexeme}'`);
+										process.exit(1);
+									}
 								} else if (tokenStream.length > i + 3) {
 									if (tokenStream[i + 3].lexeme == ';') {
-										vars[currentTok.lexeme] = convertToLiteral(tokenStream[i + 2]);
-										i += 4;
+										if (tokenStream[i + 2].lexeme == 'int' || tokenStream[i + 2].lexeme == 'float') {
+											let num = evalNumber(tokenStream[i + 2])
+										} else {
+											vars[currentTok.lexeme] = convertToLiteral(tokenStream[i + 2]);
+											i += 4;
+										}
 									} else {
-										console.log(tokenStream[i + 1].lexeme)
+										console.log(tokenStream[i + 1], i + 1)
 										console.error(`Expected ';'; got '${tokenStream[i + 3]}'`);
 										process.exit(1);
 									}
