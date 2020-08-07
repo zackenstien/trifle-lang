@@ -1,6 +1,14 @@
 ## Trifle Changelog
 Here is a list of previous updates for Trifle.
 
+## `v0.2.0`
+`v0.2.0` fixes the `v0.1.3` version's math and includes some minor performance fixes.
+
+### Features
+- Bug fixes
+- Stable math
+- Minor performance fixes
+
 ## `v0.1.3` (unstable)
 `v0.1.3` implements a command line interface that you can run Trifle scripts with + the first official release to NPM.
 To install:
