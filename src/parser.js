@@ -4,6 +4,7 @@ const lexer = require('./lexer'),
 	  require_folder = require('../lib/require_folder'),
 	  merge = require('../lib/merge'),
 	  path = require('path');
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 
 let preErr = console.error;
 console.error = function(str) {
@@ -84,24 +85,22 @@ function evalNumber(i, tokenStream, vars, env) {
 	if (firstc.lexeme == '(') {
 		var x = evalNumber(i + 1, tokenStream, vars, env);
 		n = x.outputs;
-		startPos = x.i + 1;
+		startPos = x.i;
 	}
 	
 	for (var argi = startPos; argi < tokenStream.length;) {
 		var currentTok = tokenStream[argi];
 
-		if (firstc.lexeme == '(') {
-			if (currentTok.lexeme == ')') {
-				endPos = argi;
-				break;
-			}
+		if (currentTok.lexeme == '(') {
+			var segment = evalNumber(argi, tokenStream, vars, env);
+			currentTok = convertToToken(segment.outputs);
+			argi = segment.i;
 		}
 
 		if (currentTok.name == 'var') {
 			if (vars[currentTok.lexeme] !== undefined) {
 				if (typeof vars[currentTok.lexeme] == 'number') {
 					currentTok = convertToToken(vars[currentTok.lexeme]);
-					console.log('VAR', currentTok);
 				} else {
 					console.error(`Variable ${currentTok.lexeme} is not a number`);
 					process.exit(1);
@@ -112,40 +111,26 @@ function evalNumber(i, tokenStream, vars, env) {
 			}
 		}
 
-		if (currentTok.lexeme == '(') {
-			var segment = evalNumber(argi, tokenStream, vars, env);
-			currentTok = convertToToken(segment.outputs);
-			argi = segment.i;
-		}
-
 		if (currentTok.name == 'int' || currentTok.name == 'float') {
 			if (!n) {
 				n = convertToLiteral(currentTok);
 				argi++;
 			} else if (nextOp == '+') {
-				if (currentTok.name == 'int' || currentTok.name == 'float') {
-					n += convertToLiteral(currentTok);
-					nextOp = null;
-					argi++;
-				}
+				n += convertToLiteral(currentTok);
+				nextOp = null;
+				argi++;
 			} else if (nextOp == '-') {
-				if (currentTok.name == 'int' || currentTok.name == 'float') {
-					n -= convertToLiteral(currentTok);
-					nextOp = null;
-					argi++;
-				}
+				n -= convertToLiteral(currentTok);
+				nextOp = null;
+				argi++;
 			} else if (nextOp == '/') {
-				if (currentTok.name == 'int' || currentTok.name == 'float') {
-					n = n / convertToLiteral(currentTok);
-					nextOp = null;
-					argi++;
-				}
+				n = n / convertToLiteral(currentTok);
+				nextOp = null;
+				argi++;
 			} else if (nextOp == '*') {
-				if (currentTok.name == 'int' || currentTok.name == 'float') {
-					n = n * convertToLiteral(currentTok);
-					nextOp = null;
-					argi++;
-				}
+				n = n * convertToLiteral(currentTok);
+				nextOp = null;
+				argi++;
 			} else {
 				argi++;
 			}
@@ -178,7 +163,7 @@ function evalNumber(i, tokenStream, vars, env) {
 			argi++;
 			nextOp = '*';
 		} else {
-			endPos = argi - 1;
+			endPos = argi + 1;
 			break;
 		}
 	}
@@ -214,7 +199,6 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 						process.exit(1);
 					} else {
 						if (currentArg.name == 'iden') {
-							console.log(currentArg);
 							if (currentArg.lexeme == 'true' || currentArg.lexeme == 'false' || currentArg.lexeme == 'null') {
 								if (currentArg.lexeme == 'true')
 									args.push(true);
@@ -227,7 +211,7 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 								if (typeof env[currentArg.lexeme] == 'function') {
 									let res = evalFunction(env[currentArg.lexeme], argi, tokenStream, vars, env, false);
 									args.push(res.output);
-									argi = res.i + 1;
+									argi = res.i;
 								}
 							} else {
 								console.error(`Method ${currentArg.lexeme} doesn't exist`);
@@ -236,13 +220,13 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 						} else if (currentArg.name == 'int' || currentArg.name == 'float' || currentArg.lexeme == '(') {
 							let num = evalNumber(argi, tokenStream, vars, env);
 							args.push(num.outputs);
-							argi = num.i + 1;
+							argi = num.i - 1;
 						} else if (currentArg.name == 'var') {
 							if (vars[currentArg.lexeme] !== 'undefined') {
 								if (typeof currentArg.lexeme == 'number') {
 									let num = evalNumber(argi, tokenStream, vars, env);
 									args.push(num.outputs);
-									argi = num.i + 1;
+									argi = num.i;
 								} else {
 									args.push(vars[currentArg.lexeme]);
 									argi++;
@@ -327,6 +311,7 @@ function compile(tokenStream, vmEnv) {
 										vars[currentTok.lexeme] = convertToLiteral(tokenStream[i + 2]);
 										i += 4;
 									} else {
+										console.log(tokenStream[i + 1].lexeme)
 										console.error(`Expected ';'; got '${tokenStream[i + 3]}'`);
 										process.exit(1);
 									}
