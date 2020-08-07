@@ -108,3 +108,5 @@ dist
 
 # Docusaurus source folder
 website
+
+.npmrc
