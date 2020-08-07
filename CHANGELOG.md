@@ -1,6 +1,12 @@
 ## Trifle Changelog
 Here is a list of previous updates for Trifle.
 
+## `v0.2.1`
+`v0.2.1` allows math to be used with variables & allows variables to be set to mathematical expressions.
+
+### Features
+- Bug fixes
+
 ## `v0.2.0`
 `v0.2.0` fixes the `v0.1.3` version's math and includes some minor performance fixes.
 
