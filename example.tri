@@ -1,4 +1,4 @@
 // Trifle Language
 
-$num = -400 + 22;
-println($num + 22);
+$my_array = array(32, "MATHS");
+println(array(32, "MATHS"));
