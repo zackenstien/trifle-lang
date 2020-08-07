@@ -2,8 +2,8 @@
   <img width="512" height="512" src="assets/badge.png">
 </p>
 
-# Trifle Programming Language (v0.1.4 [Alpha])
-## 0.1.4 is an unstable release.
+# Trifle Programming Language (v0.1.5 [Alpha])
+## 0.1.5 is an unstable release.
 
 ## Installation
 You can install using the `npm` command:

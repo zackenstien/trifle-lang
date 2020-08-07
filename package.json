@@ -1,9 +1,8 @@
 {
   "name": "triflelang",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A dynamically typed general purpose programming language written entirely in JavaScript.",
   "main": "parser.js",
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
   "directories": {
     "lib": "lib"
   },
