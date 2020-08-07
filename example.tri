@@ -1,3 +1,4 @@
 // Trifle Language
 
-println((100 / 2) * 2 * 2);
+$num = -400 + 22;
+println($num + 22);
