@@ -2,7 +2,7 @@
   <img width="512" height="512" src="assets/badge.png">
 </p>
 
-# Trifle Programming Language (v0.2.0 [Alpha])
+# Trifle Programming Language (v0.2.1 [Alpha])
 
 ## Installation
 You can install using the `npm` command:
