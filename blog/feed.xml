@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Trifle Blog</title>
+        <link>https://zackenstien.github.io/blog</link>
+        <description>The best place to stay up-to-date with the latest Trifle news and events.</description>
+        <lastBuildDate>Thu, 06 Aug 2020 06:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <image>
+            <title>Trifle Blog</title>
+            <url>https://zackenstien.github.io/img/favicon.ico</url>
+            <link>https://zackenstien.github.io/blog</link>
+        </image>
+        <copyright>Copyright © 2020 Zack Pace</copyright>
+        <item>
+            <title><![CDATA[New Version 1.0.0]]></title>
+            <link>https://zackenstien.github.io/blog/2020/08/06/new-blog.html</link>
+            <guid>https://zackenstien.github.io/blog/2020/08/06/new-blog.html</guid>
+            <pubDate>Thu, 06 Aug 2020 06:00:00 GMT</pubDate>
+            <description><![CDATA[<p>This blog post will test file name parsing issues when periods are present.</p> ]]></description>
+        </item>
+    </channel>
+</rss>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://zackenstien.github.io/blog</id>
+    <title>Trifle Blog</title>
+    <updated>2020-08-06T06:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://zackenstien.github.io/blog"/>
+    <subtitle>The best place to stay up-to-date with the latest Trifle news and events.</subtitle>
+    <logo>https://zackenstien.github.io/img/favicon.ico</logo>
+    <rights>Copyright © 2020 Zack Pace</rights>
+    <entry>
+        <title type="html"><![CDATA[New Version 1.0.0]]></title>
+        <id>https://zackenstien.github.io/blog/2020/08/06/new-blog.html</id>
+        <link href="https://zackenstien.github.io/blog/2020/08/06/new-blog.html"/>
+        <updated>2020-08-06T06:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>This blog post will test file name parsing issues when periods are present.</p> ]]></summary>
+        <author>
+            <name>Eric Nakagawa</name>
+            <uri>http://twitter.com/ericnakagawa</uri>
+        </author>
+    </entry>
+</feed>
