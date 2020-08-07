@@ -11,6 +11,10 @@ console.error = function(str) {
 	preErr('ERROR: ' + str);
 };
 
+function isNumber(n) {
+	return Object.prototype.toString(n) == '[object Number]';
+}
+
 function convertToToken(tok) {
 	if (tok === undefined)
 		return new Token('null', 'null');
@@ -20,9 +24,9 @@ function convertToToken(tok) {
 		return new Token('string', tok);
 	else if (typeof tok == 'number') {
 		if (Number.isInteger(tok))
-			return new Token('int', tok);
+			return new Token('int', tok.toString());
 		else
-			return new Token('float', tok);
+			return new Token('float', tok.toString());
 	} else if (typeof tok == 'boolean')
 		return new Token('iden', tok.toString());
 }
@@ -31,11 +35,13 @@ function convertToLiteral(tok, vars) {
 	/*if (!(tok instanceof Token))
 		tok = convertToToken(tok);*/
 
+	if (tok instanceof Token !== true)
+		return tok;
 	if (tok == null)
 		return tok;
 	if (typeof tok.lexeme === undefined)
 		return tok;
-	if (tok == undefined)
+	if (tok === undefined)
 		return null;
 	if (typeof tok !== 'object')
 		return tok;
@@ -95,6 +101,9 @@ function evalNumber(i, tokenStream, vars, env) {
 			var segment = evalNumber(argi, tokenStream, vars, env);
 			currentTok = convertToToken(segment.outputs);
 			argi = segment.i;
+
+			if (n == null)
+				n = segment.outputs;
 		}
 
 		if (currentTok.name == 'var') {
@@ -112,10 +121,12 @@ function evalNumber(i, tokenStream, vars, env) {
 		}
 
 		if (currentTok.name == 'int' || currentTok.name == 'float') {
-			if (!n) {
+			if (nextOp == null) {
 				n = convertToLiteral(currentTok);
 				argi++;
-			} else if (nextOp == '+') {
+				continue;
+			}
+			if (nextOp == '+') {
 				n += convertToLiteral(currentTok);
 				nextOp = null;
 				argi++;
@@ -130,8 +141,6 @@ function evalNumber(i, tokenStream, vars, env) {
 			} else if (nextOp == '*') {
 				n = n * convertToLiteral(currentTok);
 				nextOp = null;
-				argi++;
-			} else {
 				argi++;
 			}
 		} else if (currentTok.lexeme == '+') {
@@ -163,11 +172,12 @@ function evalNumber(i, tokenStream, vars, env) {
 			argi++;
 			nextOp = '*';
 		} else {
-			endPos = argi + 1;
+			endPos = argi;
 			break;
 		}
 	}
 
+	let nObj = {i: endPos, outputs: n};
 	return {i: endPos, outputs: n};
 }
 
@@ -211,7 +221,7 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 								if (typeof env[currentArg.lexeme] == 'function') {
 									let res = evalFunction(env[currentArg.lexeme], argi, tokenStream, vars, env, false);
 									args.push(res.output);
-									argi = res.i;
+									argi = res.i + 1;
 								}
 							} else {
 								console.error(`Method ${currentArg.lexeme} doesn't exist`);
@@ -220,10 +230,11 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 						} else if (currentArg.name == 'int' || currentArg.name == 'float' || currentArg.lexeme == '(') {
 							let num = evalNumber(argi, tokenStream, vars, env);
 							args.push(num.outputs);
-							argi = num.i - 1;
+							argi = num.i;
 						} else if (currentArg.name == 'var') {
 							if (vars[currentArg.lexeme] !== 'undefined') {
-								if (!isNaN(vars[currentArg.lexeme])) {
+								var toString = Object.prototype.toString;
+								if (toString.call(vars[currentArg.lexeme]) == '[object Number]') {
 									let num = evalNumber(argi, tokenStream, vars, env);
 									args.push(num.outputs);
 									argi = num.i - 1;
@@ -263,7 +274,7 @@ function evalFunction(envItem, i, tokenStream, vars, env, check) {
 			if (tokenStream[endIndex + 1].lexeme == ';') {
 				endIndex++;
 			} else {
-				console.error(`Expected ';'; got '${tokenStream[i + 1].lexeme}'`);
+				console.error(`Expected ';'; got '${tokenStream[endIndex + 1].lexeme}'`);
 				process.exit(1);
 			}
 		} else {
@@ -305,6 +316,7 @@ function compile(tokenStream, vmEnv) {
 										i = data.i + 1;
 									} else {
 										console.error(`Method '${tokenStream[i + 2].lexeme}' doesn't exist`);
+										process.exit(1);
 									}
 								} else if (tokenStream[i + 2].name == 'int' || tokenStream[i + 2].name == 'float' || tokenStream[i + 2].lexeme == '(') {
 									let num = evalNumber(i + 2, tokenStream, vars, vmEnv);
@@ -323,7 +335,6 @@ function compile(tokenStream, vmEnv) {
 											i += 4;
 										}
 									} else {
-										console.log(tokenStream[i + 1], i + 1)
 										console.error(`Expected ';'; got '${tokenStream[i + 3]}'`);
 										process.exit(1);
 									}
