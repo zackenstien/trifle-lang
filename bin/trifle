@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+var fs = require('fs'),
+    path = require('path'),
+    { lexer } = require('../dist/lexer'),
+    parser = require('../dist/parser');
+
+let args = process.argv.slice(2);
+
+if (args[0]) {
+    let p = args[0]
+    if (!path.isAbsolute(args[0]))
+        p = path.join(process.cwd(), args[0]);
+    
+    if (!fs.existsSync(p))
+        p = p + '.tri';
+    
+    if (!fs.existsSync(p))
+        console.log("File doesn't exist.");
+    else {
+        let file = fs.readFileSync(p);
+        let tokStream = lexer(file, path.basename(p));
+        console.time("Compile");
+        let ast = parser.parseAST(tokStream);
+        console.timeEnd("Compile");
+
+        console.log(ast);
+    }
+} else {
+    console.log("trifle <file>");
+}
