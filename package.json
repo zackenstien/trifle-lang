@@ -33,11 +33,8 @@
     "url": "https://github.com/zackenstien/trifle-lang/issues"
   },
   "homepage": "https://github.com/zackenstien/trifle-lang#readme",
-  "devDependencies": {
-    "eslint": "^7.6.0"
-  },
   "dependencies": {
-    "yargs": "^15.4.1"
+    "colors": "1.4.0"
   },
   "bin": {
     "trifle": "bin/trifle"
