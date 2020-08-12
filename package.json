@@ -1,21 +1,6 @@
 {
   "name": "triflelang",
-<<<<<<< HEAD
-  "version": "1.0.0",
-  "description": "The Trifle programming language.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Zack Pace",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^14.0.27"
-  },
-  "dependencies": {
-    "colors": "^1.4.0"
-=======
-  "version": "0.2.2",
+  "version": "0.3",
   "description": "A dynamically typed general purpose programming language written entirely in JavaScript.",
   "main": "parser.js",
   "directories": {
@@ -53,7 +38,6 @@
   },
   "dependencies": {
     "yargs": "^15.4.1"
->>>>>>> d77fd7b7e746b9c8c8772b4f4ee11303254bd38e
   },
   "bin": {
     "trifle": "bin/trifle"
