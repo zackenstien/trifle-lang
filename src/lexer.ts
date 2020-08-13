@@ -38,6 +38,7 @@ tokenParse: for (let i = 0; i < str.length;) {
                     continue tokenParse;
                 } else if (regex.name == 'wspace') {
                     i++;
+                    char += 1;
                     continue tokenParse;
                 }
 

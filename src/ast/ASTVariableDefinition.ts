@@ -2,14 +2,14 @@
 import { ASTItem } from './ASTItem';
 import { Token } from '../Token';
 
-export class ASTFunctionCall extends ASTItem {
+export class ASTVariableDefinition extends ASTItem {
     name: string;
-    args: Token[];
+    value: Token;
 
-    constructor(name: string, args: Token[], filename: string) {
+    constructor(name: string, value: Token, filename: string) {
         super(filename);
 
         this.name = name;
-        this.args = args;
+        this.value = value;
     }
 }

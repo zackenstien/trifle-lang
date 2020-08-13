@@ -19,11 +19,15 @@ if (args[0]) {
     else {
         let file = fs.readFileSync(p);
         let tokStream = lexer(file, path.basename(p));
-        console.time("Compile");
-        let ast = parser.parseAST(tokStream);
-        console.timeEnd("Compile");
 
-        console.log(ast);
+        console.time("Run");
+        let ast = parser.parseAST(tokStream);
+        parser.parse(ast, {
+            print: function(...args) {
+                console.log.apply({}, args);
+            }
+        });
+        console.timeEnd("Run");
     }
 } else {
     console.log("trifle <file>");
