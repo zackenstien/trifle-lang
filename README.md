@@ -4,3 +4,14 @@
 
 # Trifle Programming Language (v0.3)
 Work in progress.
+
+## Building & Testing
+If you want to test your build of Trifle, you can run the `tsc` command:
+```sh
+tsc
+```
+And then run the `test.tri` file in the root of the repository:
+```sh
+npm link --force
+trifle ./test
+```
