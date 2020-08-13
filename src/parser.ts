@@ -63,7 +63,7 @@ export function parse(ast: ASTItem[], env: object) {
             if (env[item.name]) {
                 let args = item.args.map(i => {
                     return convert(i, vars);
-                })
+                });
 
                 env[item.name].apply({}, args);
             }

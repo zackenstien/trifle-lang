@@ -4,9 +4,9 @@ import { Token } from '../Token';
 
 export class ASTVariableDefinition extends ASTItem {
     name: string;
-    value: Token;
+    value: Token|ASTItem;
 
-    constructor(name: string, value: Token, filename: string) {
+    constructor(name: string, value: Token|ASTItem, filename: string) {
         super(filename);
 
         this.name = name;

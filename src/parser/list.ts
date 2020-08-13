@@ -1,8 +1,10 @@
 import { Token } from '../Token';
 import { syntaxError } from '../error/stdErrors';
+import { ASTArray } from '../ast/ASTArray';
+import ASTItem from '../ast/ASTItem';
 
 export function list(start: string, end: string, i: number, tokStream: Token[]) {
-    let list: Token[] = [];
+    let retList: (Token|ASTItem)[] = [];
     let startPosition: number = i;
     let endPosition: number;
     let expecting: number = 0; // 0 = argument, 1 = comma.
@@ -25,9 +27,16 @@ export function list(start: string, end: string, i: number, tokStream: Token[]) 
             break;
         }
 
+
         if (expecting == 0) {
             expecting = 1;
-            list.push(currentTok);
+            if (currentTok.lexeme == '[') {
+                let item = list('[', ']', argi, tokStream);
+                retList.push(new ASTArray(item.list, currentTok.filename))
+                argi = item.i + 1;
+                continue;
+            }
+            retList.push(currentTok);
             argi++;
         } else if (expecting == 1) {
             expecting = 0;
@@ -40,10 +49,10 @@ export function list(start: string, end: string, i: number, tokStream: Token[]) 
     }
 
     if (endPosition) {
-        return {list, i: endPosition};
+        return {list: retList, i: endPosition};
     } else {
         console.error(`Expected '${end}', got '<EOF>'.`);
         process.exit(1);
     }
 }
-export default list;
+export default retList;

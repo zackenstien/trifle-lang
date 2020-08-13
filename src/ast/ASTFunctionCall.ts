@@ -4,7 +4,7 @@ import { Token } from '../Token';
 
 export class ASTFunctionCall extends ASTItem {
     name: string;
-    args: Token[];
+    args: (Token|ASTItem)[];
 
     constructor(name: string, args: Token[], filename: string) {
         super(filename);
